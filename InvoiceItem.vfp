@@ -1,0 +1,76 @@
+<apex:page doctype="html-5.0" controller="InvoiceItemController" showHeader="false" sidebar="false" action="{!deleteRecord}" standardStylesheets="false">
+    
+    <apex:stylesheet value="{!$Resource.Formstyle}" />
+    <apex:stylesheet value="{!URLFOR($Resource.image1, 'img.jpg')}"/>
+    <apex:includeScript value="{! $Resource.image1 }"/>
+    
+   <div class="testbox">
+      <apex:form >
+        <div class="banner">
+             <apex:image url="{!URLFOR($Resource.image1, 'img.jpg')}" width="600" height="300" />
+            <h1>Customer Invoice Items</h1>
+            
+            
+            </div>
+        <br/>
+           <div align ="right">
+          
+          <apex:outputLink value="/apex/customer"><button type="button" class ="button3">Customer</button></apex:outputLink>&nbsp;
+          <apex:outputLink value="/apex/invoice"><button type="button" class ="button3">Invoice</button></apex:outputLink>&nbsp;
+      <apex:outputLink value="/apex/invoiceItem"><button type="button" class ="button3">Invoice Items</button></apex:outputLink></div>
+  
+        <fieldset>
+            <legend>Customer Invoice Items</legend>
+<p>Enter Invoice Items</p>
+             <div class="item">
+          Invoice Name <span>*</span>
+               <apex:inputField ignoreEditPermissionForRendering="true" value="{!invoiceItemRecord.Bill_Invoice__c}" />
+          </div>
+          <div class="item">
+       Item Name <span></span>
+      <apex:inputField ignoreEditPermissionForRendering="true" value="{!invoiceItemRecord.Name}"/>
+          </div>
+          <div class="item">
+       Item Description<span></span>
+              <apex:inputField ignoreEditPermissionForRendering="true" value="{!invoiceItemRecord.Description__c}"/>
+          </div>
+         <div class="item">
+       Item Cost <span></span>
+             <apex:inputField ignoreEditPermissionForRendering="true" value="{!invoiceItemRecord.Cost__c}"/>
+          </div>
+ 
+                  
+          </fieldset>
+          <br/>
+         <div align ="center">
+             <apex:commandButton action="{!createInvoiceItem}" value="Submit" styleClass="button3" />
+                </div>
+          <br/>
+           <div align ="center">
+               <apex:outputText rendered="{!IF((idPresent), true, false)}"> 
+                   <br/>
+                   <h2>Invoice Name:&nbsp;{!invoiceItemRecords[0].Bill_Invoice__r.Name}</h2> <br/>
+               
+               <h2>Total Invoice Amount: &nbsp;{!invoiceItemRecords[0].Bill_Invoice__r.Total_Invoice_Amount__c}</h2>
+               </apex:outputText>
+               <table align ="center">
+   <apex:pageBlock title="Invoice Items Details for this invoice" mode="edit">
+	<apex:pageBlockTable value="{!invoiceItemRecords}" var="invoiceItems">
+            <tr><td><apex:column headerValue="Invoice Name" value="{!invoiceItems.Bill_Invoice__c}"/></td></tr>
+         <tr><td><apex:column headerValue="Invoice Item Name" value="{!invoiceItems.Name}"/></td></tr>
+        <tr><td><apex:column value="{!invoiceItems.Description__c}"/></td></tr>
+       <tr><td><apex:column value="{!invoiceItems.Cost__c}"/>Cost</td></tr>
+        <apex:column headerValue="Action">
+           
+              <apex:outputLink value="/apex/InvoiceItem?invoiceItem_id={!invoiceItems.id}&BillInvoice_id={!invoiceItems.Bill_Invoice__c}"> Edit</apex:outputLink> &nbsp;&nbsp;
+          <apex:outputlink styleClass="nav-link active" onclick="if(!confirm('Are you sure?')) return false;" 
+              value="/apex/invoice?invoiceItem_id={!invoiceItems.id}&BillInvoice_id={!invoiceItems.Bill_Invoice__c}&action=delete"><i class="fas fa-user-plus"></i> Delete </apex:outputlink>
+        </apex:column>
+ 			
+  	</apex:pageBlockTable>
+       </apex:pageBlock>
+               </table>
+              </div>
+       </apex:form>
+    </div>
+</apex:page>

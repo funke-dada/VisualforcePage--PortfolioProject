@@ -1,0 +1,89 @@
+<apex:page docType="html-5.0" standardController="Customer__c"  extensions="CustomerControllerExtension" showHeader="false" sidebar="false" standardStylesheets="false" action="{!deleteRecord}">
+           <apex:stylesheet value="{!$Resource.Formstyle}" />
+    <apex:stylesheet value="{!URLFOR($Resource.image1, 'img.jpg')}"/>
+    
+   <div class="testbox">
+      <apex:form >
+        <div class="banner">
+             <apex:image url="{!URLFOR($Resource.image1, 'img.jpg')}" width="600" height="300" />
+            <h1>Customer Information</h1>
+        </div>
+        <br/>
+     
+      <div align ="right">
+          
+          <apex:outputLink value="/apex/customer"><button type="button" class ="button3">Customer</button></apex:outputLink>&nbsp;
+          <apex:outputLink value="/apex/invoice"><button type="button" class ="button3">Invoice</button></apex:outputLink>&nbsp;
+      <apex:outputLink value="/apex/invoiceItem"><button type="button" class ="button3">Invoice Items</button></apex:outputLink></div>
+  
+        <fieldset>
+     
+          <legend>Customer Information</legend>
+         
+            <p><b>Enter Customer Details</b></p>
+            <div class="item">
+            <p align ="right">
+                <span>*</span>Required Information</p>
+            </div>
+             <div class="item">
+                 Customer Username<span>*</span>
+              <apex:inputField ignoreEditPermissionForRendering="true" value="{!customerRecord.Name}"/>
+          </div>
+             <div class="item">
+           First Name <span>*</span>
+              <apex:inputField ignoreEditPermissionForRendering="true" value="{!customerRecord.First_Name__c}"/>
+          </div>
+             <div class="item">
+           Last Name <span>*</span>
+              <apex:inputField ignoreEditPermissionForRendering="true" value="{!customerRecord.Last_Name__c}"/>
+          </div>
+          <div class="item">
+           Email <span>*</span>
+                <apex:inputField ignoreEditPermissionForRendering="true" value="{!customerRecord.Email__c}"/>
+          </div>
+         <div class="item">
+          Phone Number <span>*</span>
+              <apex:inputField ignoreEditPermissionForRendering="true" value="{!customerRecord.Phone_Number__c}"/>
+          </div>
+         <div class="item">
+         Billing Address 
+             <apex:inputField ignoreEditPermissionForRendering="true" value="{!customerRecord.Billing_Address__c}"/>
+          </div>
+    
+          </fieldset>
+          <br/>
+         <div class="myDiv">
+             <apex:commandButton action="{!createCustomer}" value="Submit" styleClass="button3"/>
+             
+             <p/>
+              </div><br/>
+       
+          <div>
+               <table align ="center">
+             <th>All Customers Details</th>
+   <apex:pageBlock mode="edit" id="form" >
+	<apex:pageBlockTable value="{!customers}" var="customerRecords">
+      
+        <tr><td><apex:column value="{!customerRecords.First_Name__c}"/></td></tr>
+       <tr><td><apex:column value="{!customerRecords.Last_Name__c}"/></td></tr>
+			<tr><td><apex:column value="{!customerRecords.Email__c}"/></td></tr>
+ 			<tr><td><apex:column value="{!customerRecords.Phone_Number__c}"/></td></tr>
+     		<tr><td><apex:column value="{!customerRecords.Billing_Address__c}"/></td></tr>
+       
+         <apex:column headerValue="Action">
+           
+              <apex:outputLink value="/apex/customer?Id={!customerRecords.id}"> <i class="far fa-edit"></i>Edit</apex:outputLink>&nbsp;&nbsp;
+             <apex:outputlink styleClass="nav-link active" onclick="if(!confirm('Are you sure?')) return false;" 
+              value="/apex/Customer?cust_id={!customerRecords.Id}&action=delete"><i class="fas fa-user-plus"></i> Delete </apex:outputlink>
+        </apex:column>
+        
+  	</apex:pageBlockTable>
+       </apex:pageBlock>
+               </table>
+              </div>
+       </apex:form>
+       <br/>
+      
+    </div><br/>
+     
+</apex:page>

@@ -1,0 +1,89 @@
+<apex:page docType="html-5.0" controller="InvoiceController" showHeader="false" sidebar="false" action="{!deleteRecord}" standardStylesheets="false">
+   
+    <apex:stylesheet value="{!$Resource.Formstyle}" />
+    <apex:stylesheet value="{!URLFOR($Resource.image1, 'img.jpg')}"/>
+    <apex:includeScript value="{! $Resource.image1 }"/>
+    
+   <div class="testbox">
+      <apex:form >
+        <div class="banner">
+             <apex:image url="{!URLFOR($Resource.image1, 'img.jpg')}" width="600" height="300" />
+            <h1>Customer Invoice Details</h1>
+            
+            </div>
+        <br/>
+          <div align ="right">
+          
+          <apex:outputLink value="/apex/customer"><button type="button" class ="button3">Customer</button></apex:outputLink>&nbsp;
+          <apex:outputLink value="/apex/invoice"><button type="button" class ="button3">Invoice</button></apex:outputLink>&nbsp;
+      <apex:outputLink value="/apex/invoiceItem"><button type="button" class ="button3">Invoice Items</button></apex:outputLink></div>
+  
+        <fieldset>
+            <legend>Customer Invoice Details</legend>
+   
+<p>Enter Invoice Details</p>
+               <div class="item">
+     Invoice Name <span></span>
+                   <apex:inputField ignoreEditPermissionForRendering="true" value="{!invoice.Name}"/></div>
+
+            <div class="item">
+      Customer <span></span>
+                   <apex:inputField ignoreEditPermissionForRendering="true" value="{!invoice.Customer__c}"/></div>
+            
+          <div class="item">
+        Start Date <span></span>
+              <apex:inputField type="date" ignoreEditPermissionForRendering="true" value="{!invoice.Start_Date__c}"/>
+          </div>
+          <div class="item">
+       End Date<span></span>
+              <apex:inputField type="date" ignoreEditPermissionForRendering="true" value="{!invoice.End_Date__c}"/>
+          </div>
+            
+          </fieldset>
+          <br/>
+         <div class ="myDiv">
+             <apex:commandButton action="{!createInvoice}" value="Submit" styleClass="button3"/>
+                </div>
+          
+          <div><br/>
+                  <table align ="center"> 
+   <apex:pageBlock title="Invoices Details for customers" mode="edit">
+       <apex:outputText rendered="{!IF((idPresent), true, false)}"> 
+            
+          <div class ="myDiv">
+              <p>
+              Name:  {!invoices[0].Customer__r.First_Name__c}&nbsp;{!invoices[0].Customer__r.Last_Name__c}
+               </p> 
+              <p>
+              Email:  {!invoices[0].Customer__r.Email__c}
+               </p>
+               <p>
+              Phone Number:  {!invoices[0].Customer__r.Phone_Number__c}
+               </p>
+              <p>
+              Billing Address:  {!invoices[0].Customer__r.Billing_Address__c}
+               </p>
+          </div>
+             </apex:outputText>
+          
+           <div>
+	<apex:pageBlockTable value="{!invoices}" var="invoiceRecords">
+            <tr><td><apex:column value="{!invoiceRecords.Name}"/></td></tr>
+         <tr><td><apex:column headerValue="Customer Username" value="{!invoiceRecords.Customer__c}"/></td></tr>
+        <tr><td><apex:column value="{!invoiceRecords.Start_Date__c}"/></td></tr>
+       <tr><td><apex:column value="{!invoiceRecords.End_Date__c}"/></td></tr>
+
+        <apex:column headerValue="Action">
+              
+              <apex:outputLink value="/apex/invoice?invoice_id={!invoiceRecords.id}&cust_id={!invoiceRecords.Customer__c}"> Edit </apex:outputLink>&nbsp;&nbsp;
+          <apex:outputlink styleClass="nav-link active" onclick="if(!confirm('Are you sure?')) return false;" 
+              value="/apex/invoice?invoice_id={!invoiceRecords.id}&cust_id={!invoiceRecords.Customer__c}&action=delete"><i class="fas fa-user-plus"></i> Delete </apex:outputlink>
+        </apex:column>
+     
+  	</apex:pageBlockTable>  </div>
+       </apex:pageBlock>
+               </table>
+          </div>
+       </apex:form>
+    </div>
+</apex:page>

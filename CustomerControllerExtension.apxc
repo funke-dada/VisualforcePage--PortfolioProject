@@ -1,0 +1,72 @@
+public class CustomerControllerExtension {
+    public Customer__c customerRecord {get;set;}
+    public List<Customer__c> customers {get;set;}
+    public Id currentId {get; set;}
+    public String current_action {get; set;}
+    public Id cust_id {get; set;}
+    public List<Customer__c> deletCustomList {get; set;}
+
+    
+    public CustomerControllerExtension(ApexPages.StandardController stdController) {
+         this.currentId = ApexPages.CurrentPage().getparameters().get('id');
+        
+        customers = [SELECT id, Name,First_Name__c, Last_Name__c, Billing_Address__c, Email__c, Phone_Number__c from Customer__c];
+        
+        //Handle delete request
+         this.cust_id = ApexPages.CurrentPage().getparameters().get('cust_id');
+         this.current_action = ApexPages.CurrentPage().getparameters().get('action');
+        
+        //if current id is null, get the data in the input form, else edit the data
+         if(currentId ==null){
+             this.customerRecord = (Customer__c)stdController.getRecord();   
+  
+         }
+        
+        else{
+            this.customerRecord = [SELECT id, Name,First_Name__c, Last_Name__c, Billing_Address__c, Email__c, Phone_Number__c from Customer__c where Id =: currentId];
+             
+         }  
+    }
+
+    public PageReference createCustomer(){
+        
+        List<Customer__c> CustomerList = [Select id, Name,  Billing_Address__c, Email__c, Phone_Number__c from customer__c where Email__c =: customerRecord.email__c];
+        if(!CustomerList.isEmpty()) {
+          customerRecord.id = CustomerList[0].id; //The id to be updated
+         // update existing customer record  
+            update customerRecord;
+        }else {
+        //insert new customer record
+            upsert customerRecord;
+
+        }  
+        PageReference CustomerListingPage = new PageReference('/apex/customer');
+            CustomerListingPage.setRedirect(true);
+             return CustomerListingPage;      
+      
+    }
+    
+   //Delete function
+	public pagereference deleteRecord() {
+        
+        if(cust_id != null  && current_action == 'delete'){
+             //List<customer__c > delobj = new List<customer__c >();
+            deletCustomList = [select id FROM customer__c where id =: cust_id LIMIT 1];
+            
+           if(deletCustomList.size()>0 || deletCustomList[0].Id != ''){
+               delete deletCustomList;
+                
+          }
+            
+            pagereference ref=new pagereference('/apex/customer');
+            ref.setRedirect(true);
+        	 return ref;
+     
+        }
+        
+        return null;
+       
+   }
+
+    
+}

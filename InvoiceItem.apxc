@@ -1,0 +1,65 @@
+public class InvoiceController{
+      public Bill_Invoice__c invoice{get; set;}
+      public list <Bill_Invoice__c> invoices{get; set;}
+      public Boolean idPresent {get; set;}
+      public String current_action {get; set;}
+      public Id cust_id {get; set;}
+      public Id invoice_id {get; set;}
+      public List<Bill_Invoice__c> deletCustomList {get; set;}
+
+      public InvoiceController() {
+          //Handle delete request
+            this.cust_id = ApexPages.CurrentPage().getparameters().get('cust_id');
+            this.invoice_id = ApexPages.CurrentPage().getparameters().get('invoice_id');
+            this.current_action = ApexPages.CurrentPage().getparameters().get('action');
+        
+         if(cust_id ==null && invoice_id ==null){
+             idPresent = false;
+            this.invoice = new Bill_invoice__c();
+           this.invoices = [SELECT id, Name, Customer__r.Name, Customer__r.First_Name__c, 
+                           Customer__r.Last_Name__c, Customer__r.Email__c, Customer__r.Phone_Number__c, 
+                           Customer__r.Billing_Address__c, Start_Date__c, End_Date__c from Bill_Invoice__c];
+            System.debug('invoices' +invoices);
+         }else{   
+                 idPresent = true;
+           this.invoice = new Bill_invoice__c();
+             invoice.Customer__c =cust_id; //set the default customer field to current customer id
+             invoice.id = invoice_id; //set the default invoice field to current invoice id
+          invoices = [SELECT id, Name, Customer__r.Name, Customer__r.First_Name__c, Customer__r.Last_Name__c,
+                      Customer__r.Email__c, Customer__r.Phone_Number__c, Customer__r.Billing_Address__c, Start_Date__c, 
+                      End_Date__c from Bill_Invoice__c where Customer__r.Id =: cust_id AND id =: invoice_id LIMIT 1];
+              System.debug('invoices' +invoices);
+         }
+     }    
+    
+	public PageReference createInvoice() {
+        System.debug('invoice details ' +invoice);
+	upsert invoice;
+        
+         PageReference InvoicePage = new PageReference('/apex/Invoice?Id='+invoice.Customer__c);
+             InvoicePage.setRedirect(true);
+             return InvoicePage;  
+	}
+   
+ //Delete function
+	public pagereference deleteRecord() {
+        
+        if(cust_id != null  && invoice_id != null && current_action == 'delete'){
+            
+            deletCustomList = [select id, Customer__r.id FROM Bill_Invoice__c where id =: invoice_id AND Customer__r.id =: cust_id LIMIT 1];
+            System.debug(' deletCustomList' + deletCustomList);
+            if(deletCustomList.size()>0 || deletCustomList[0].Id != ''){
+               delete deletCustomList;
+                
+          }
+             pagereference ref=new pagereference('/apex/invoice');
+             ref.setRedirect(true);
+        	 return ref;
+
+              }
+           return null;       
+   }
+
+    
+   
+}
